@@ -77,8 +77,8 @@ async def api_generate_pulse():
         
         # Phase 2: Batch and Normalize
         logger.info("Starting Phase 2 (Batch/Normalize)...")
-        batches = run_phase2_pipeline()
-        save_phase2_results(batches)
+        preprocessed, batches = run_phase2_pipeline()
+        save_phase2_results(preprocessed, batches)
         
         # Phase 3: Theme Generation
         logger.info("Starting Phase 3 (Theme Generation)...")
