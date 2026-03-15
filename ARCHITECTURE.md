@@ -1,109 +1,109 @@
-# 🏗️ App Review Insights Analyser — Detailed Phase-wise Architecture
+#  App Review Insights Analyser  Detailed Phase-wise Architecture
 ### Product: Groww | LLM: Groq + Gemini (Free Tier) | Stack: Python + React (Vite)
 
 ---
 
-## 📌 Executive Summary
+##  Executive Summary
 
-The **App Review Insights Analyser** automatically fetches recent Groww Play Store reviews (using the free, open-source `google-play-scraper`), clusters them into up to 5 key themes using Groq's free LLM API, generates a scannable ≤250-word weekly pulse using Gemini's free API, and sends a draft email to a user-provided address — all triggered from a premium web UI.
+The **App Review Insights Analyser** automatically fetches recent Groww Play Store reviews (using the free, open-source `google-play-scraper`), clusters them into up to 5 key themes using Groq's free LLM API, generates a scannable 250-word weekly pulse using Gemini's free API, and sends a draft email to a user-provided address  all triggered from a premium web UI.
 
-**100% Free Stack — no paid APIs required.**
+**100% Free Stack  no paid APIs required.**
 
 ---
 
-## 💸 Free-Tier-Only Technology Stack
+##  Free-Tier-Only Technology Stack
 
 | Layer | Technology | Cost | Details |
 |-------|-----------|------|---------|
-| **Play Store Reviews** | `google-play-scraper` (Python) | ✅ Free | No API key, no login, reads public data |
-| **LLM (Themes + Classification)** | Groq `llama3-70b-8192` | ✅ Free tier | 6,000 req/day, 500K tokens/min |
-| **LLM (Pulse Generation)** | Google Gemini (`gemini-2.5-flash`, `gemini-2.5-flash-lite`, `gemini-3.1-flash-lite`) | ✅ Free tier | 15 RPM, 1M tokens/min |
-| **LLM Clients** | `groq` + `google-generativeai` SDKs | ✅ Free | Official SDKs |
-| **Backend API** | FastAPI (Python) | ✅ Free | Async-ready, auto docs |
-| **Frontend** | React + Vite | ✅ Free | Fast, modern SPA |
-| **Styling** | Vanilla CSS | ✅ Free | Flexible, no framework lock-in |
-| **Email** | Gmail SMTP (App Password) | ✅ Free | Needs only a Gmail account |
-| **PDF Export** | Browser `window.print()` | ✅ Free | Zero backend dependency |
-| **Async Jobs** | FastAPI BackgroundTasks | ✅ Free | No Celery needed for MVP |
-| **Data Handling** | pandas, pydantic | ✅ Free | Validation + manipulation |
+| **Play Store Reviews** | `google-play-scraper` (Python) |  Free | No API key, no login, reads public data |
+| **LLM (Themes + Classification)** | Groq `llama3-70b-8192` |  Free tier | 6,000 req/day, 500K tokens/min |
+| **LLM (Pulse Generation)** | Google Gemini (`gemini-2.5-flash`, `gemini-2.5-flash-lite`, `gemini-3.1-flash-lite`) |  Free tier | 15 RPM, 1M tokens/min |
+| **LLM Clients** | `groq` + `google-generativeai` SDKs |  Free | Official SDKs |
+| **Backend API** | FastAPI (Python) |  Free | Async-ready, auto docs |
+| **Frontend** | React + Vite |  Free | Fast, modern SPA |
+| **Styling** | Vanilla CSS |  Free | Flexible, no framework lock-in |
+| **Email** | Gmail SMTP (App Password) |  Free | Needs only a Gmail account |
+| **PDF Export** | Browser `window.print()` |  Free | Zero backend dependency |
+| **Async Jobs** | FastAPI BackgroundTasks |  Free | No Celery needed for MVP |
+| **Data Handling** | pandas, pydantic |  Free | Validation + manipulation |
 
 ---
 
-## 🗂️ High-Level System Overview
+##  High-Level System Overview
 
 ```
-┌─────────────────────────────────────────────────────────────────────────────┐
-│                          USER BROWSER (React UI)                             │
-│  ┌────────────────────┐  ┌────────────────────┐  ┌───────────────────────┐  │
-│  │  Fetch Live Reviews │  │  View Weekly Pulse  │  │  Enter Email & Send   │  │
-│  │                     │  │  (Themes, Quotes,   │  │  Draft Email          │  │
-│  └─────────┬──────────┘  │   Action Ideas)     │  └──────────┬────────────┘  │
-│            │             └─────────┬───────────┘             │              │
-└────────────┼───────────────────────┼─────────────────────────┼──────────────┘
-             │  REST API             │                          │
-┌────────────▼───────────────────────▼─────────────────────────▼──────────────┐
-│                         FASTAPI BACKEND (Python)                             │
-│  ┌─────────────────┐  ┌───────────────────┐  ┌──────────────────────────┐   │
-│  │ Review Fetcher   │  │ LLM Processing    │  │  Email Draft Service     │   │
-│  │ (Play Store      │  │ Groq + Gemini     │  │  (Gmail SMTP, free)     │   │
-│  │  Scraper)        │  │ (both free tier)  │  │                          │   │
-│  └────────┬────────┘  └─────────┬─────────┘  └──────────┬───────────────┘   │
-│           │                     │                        │                   │
-│  ┌────────▼─────────────────────▼────────────────────────▼──────────────┐    │
-│  │                      Core Pipeline Orchestrator                       │    │
-│  └──────────────────────────────────────────────────────────────────────┘    │
-└─────────────────────────────────────────────────────────────────────────────┘
-             │
-┌────────────▼───────────────────────────────────────────────────────────┐
-│               EXTERNAL SERVICES (ALL FREE)                               │
-│  ┌──────────────┐  ┌──────────────────┐  ┌────────────────────┐          │
-│  │  Groq LLM    │  │  Gemini LLM      │  │  Google Play Store │          │
-│  │  Free Tier   │  │  Free Tier       │  │  (public reviews)  │          │
-│  │  llama3-70b  │  │  gemini-2.5-flash│  │  via scraper lib   │          │
-│  └──────────────┘  └──────────────────┘  └────────────────────┘          │
-└───────────────────────────────────────────────────────────────────────────┘
+
+                          USER BROWSER (React UI)                             
+        
+    Fetch Live Reviews     View Weekly Pulse      Enter Email & Send     
+                           (Themes, Quotes,       Draft Email            
+       Action Ideas)         
+                                                    
+
+               REST API                                       
+
+                         FASTAPI BACKEND (Python)                             
+         
+   Review Fetcher      LLM Processing        Email Draft Service        
+   (Play Store         Groq + Gemini         (Gmail SMTP, free)        
+    Scraper)           (both free tier)                                 
+         
+                                                                           
+      
+                        Core Pipeline Orchestrator                           
+      
+
+             
+
+               EXTERNAL SERVICES (ALL FREE)                               
+                
+    Groq LLM        Gemini LLM          Google Play Store           
+    Free Tier       Free Tier           (public reviews)            
+    llama3-70b      gemini-2.5-flash    via scraper lib             
+                
+
 ```
 
 ---
 
-## 🔄 End-to-End Data Flow
+##  End-to-End Data Flow
 
 ```
 User clicks "Fetch Live Reviews"
-        │
-        ▼
+        
+        
   [Phase 1] Review Fetching & Data Ingestion
-        │  - google-play-scraper fetches public Play Store reviews
-        │  - Filter: last 8–12 weeks
-        │  - Strip PII (usernames, emails, IDs)
-        │  - Remove reviews containing emojis
-        │  - Deduplicate
-        ▼
+          - google-play-scraper fetches public Play Store reviews
+          - Filter: last 812 weeks
+          - Strip PII (usernames, emails, IDs)
+          - Remove reviews containing emojis
+          - Deduplicate
+        
   [Phase 2] Preprocessing & Enrichment
-        │  - Normalise text (lowercase, strip HTML)
-        │  - Attach metadata: rating, date
-        │  - Chunk reviews into batches (≤50/batch)
-        ▼
+          - Normalise text (lowercase, strip HTML)
+          - Attach metadata: rating, date
+          - Chunk reviews into batches (50/batch)
+        
   [Phase 3] LLM Theme Generation (Groq Free Tier)
-        │  - Prompt: "Given these reviews, identify 3–5 themes"
-        │  - Parse structured JSON output (theme_name, description)
-        │  - Store theme taxonomy
-        ▼
-  [Phase 4] Review → Theme Classification (Groq Free Tier)
-        │  - Prompt: classify each review into one of the N themes
-        │  - Assign theme label to each review
-        │  - Compute theme frequencies
-        ▼
+          - Prompt: "Given these reviews, identify 35 themes"
+          - Parse structured JSON output (theme_name, description)
+          - Store theme taxonomy
+        
+  [Phase 4] Review  Theme Classification (Groq Free Tier)
+          - Prompt: classify each review into one of the N themes
+          - Assign theme label to each review
+          - Compute theme frequencies
+        
   [Phase 5] Weekly Pulse Generation (Gemini Free Tier)
-        │  - Select Top 3 themes by frequency
-        │  - Extract 3 representative user quotes (PII-free)
-        │  - Generate 3 action ideas
-        │  - Produce ≤250-word one-page pulse (Markdown)
-        ▼
+          - Select Top 3 themes by frequency
+          - Extract 3 representative user quotes (PII-free)
+          - Generate 3 action ideas
+          - Produce 250-word one-page pulse (Markdown)
+        
   [Phase 6] Email Draft Assembly & Send
-        │  - Wrap pulse in email HTML template
-        │  - Gmail SMTP send to user-supplied address
-        ▼
+          - Wrap pulse in email HTML template
+          - Gmail SMTP send to user-supplied address
+        
   [Phase 7] UI Display
         - Render pulse in React UI
         - Provide PDF/MD download
@@ -112,11 +112,11 @@ User clicks "Fetch Live Reviews"
 
 ---
 
-## 📦 Phase-wise Architecture
+##  Phase-wise Architecture
 
 ---
 
-### PHASE 1 — Review Fetching & Data Ingestion
+### PHASE 1  Review Fetching & Data Ingestion
 
 **Goal:** Fetch live reviews from the Google Play Store and produce a clean, PII-free dataset.
 
@@ -124,7 +124,7 @@ User clicks "Fetch Live Reviews"
 
 **Primary method:** Fetch reviews directly from Google Play Store using the free `google-play-scraper` Python library.
 
-##### Play Store — `google-play-scraper`
+##### Play Store  `google-play-scraper`
 
 ```python
 from google_play_scraper import reviews, Sort
@@ -143,11 +143,11 @@ result, continuation_token = reviews(
 
 | Field | Description | Used? |
 |-------|-------------|-------|
-| `score` | Rating (1–5) | ✅ Mapped to `rating` |
-| `content` | Review text | ✅ Mapped to `text` |
-| `at` | Review date (datetime) | ✅ Mapped to `date` |
-| `userName` | Reviewer's username | ❌ **Stripped (PII)** |
-| `reviewId` | Google's review ID | ❌ **Stripped (PII)** |
+| `score` | Rating (15) |  Mapped to `rating` |
+| `content` | Review text |  Mapped to `text` |
+| `at` | Review date (datetime) |  Mapped to `date` |
+| `userName` | Reviewer's username |  **Stripped (PII)** |
+| `reviewId` | Google's review ID |  **Stripped (PII)** |
 | `thumbsUpCount` | Helpful votes | Optional metadata |
 
 > **Note:** App Store support can be added later using `app-store-scraper` if needed. For now, we focus on Play Store reviews only.
@@ -158,7 +158,7 @@ result, continuation_token = reviews(
 |-----------|-------------|
 | `review_fetcher.py` | Calls `google-play-scraper`; returns raw Play Store reviews |
 | `pii_scrubber.py` | Regex + rule-based removal of emails, phone numbers, usernames |
-| `date_filter.py` | Keeps reviews within the last 8–12 weeks from `run_date` |
+| `date_filter.py` | Keeps reviews within the last 812 weeks from `run_date` |
 | `language_filter.py` | Detects language using `langdetect`; keeps only English reviews |
 | `emoji_filter.py` | Removes reviews that contain emoji characters (regex-based Unicode emoji detection) |
 | `deduplicator.py` | Drops exact-duplicate review texts |
@@ -171,24 +171,24 @@ result, continuation_token = reviews(
   "rating": 4,
   "text": "Love the SIP feature...",
   "date": "2026-01-20",
-  "platform": "android"          // hardcoded — Play Store only
+  "platform": "android"          // hardcoded  Play Store only
 }
 ```
 
 > **PII Rule:** Username, reviewer ID, and any identifiable fields are **never stored**. Title is dropped entirely. Only `rating`, `text`, `date`, and `platform` (hardcoded as `android`) survive ingestion. Platform is limited to **mobile app (Google Play Store) only**.
 
 #### Validation & Filtering Rules
-- `rating` ∈ [1, 5]
+- `rating`  [1, 5]
 - `date` parseable as ISO8601
-- `text` must have **≥ 5 words** (reviews with fewer words are useless noise — e.g. "good app", "nice")
-- `title` field is **dropped entirely** — not stored, not sent to LLM
+- `text` must have ** 5 words** (reviews with fewer words are useless noise  e.g. "good app", "nice")
+- `title` field is **dropped entirely**  not stored, not sent to LLM
 - **Non-English reviews are removed** using `langdetect` (only `en` reviews pass)
-- **Reviews containing emojis are removed** — emoji-heavy reviews tend to be low-signal noise (e.g. "👍👍👍", "🔥🔥 best app"); uses regex-based Unicode emoji detection to identify and drop any review whose `text` contains one or more emoji characters
+- **Reviews containing emojis are removed**  emoji-heavy reviews tend to be low-signal noise (e.g. "", " best app"); uses regex-based Unicode emoji detection to identify and drop any review whose `text` contains one or more emoji characters
 - Drop rows failing any rule
 
 ---
 
-### PHASE 2 — Preprocessing & Text Enrichment
+### PHASE 2  Preprocessing & Text Enrichment
 
 **Goal:** Normalise review text for LLM consumption.
 
@@ -203,20 +203,20 @@ result, continuation_token = reviews(
 #### Rating Bucketing Logic
 
 ```
-1–2  → negative
-3    → neutral
-4–5  → positive
+12   negative
+3     neutral
+45   positive
 ```
 
 #### Output
-- `preprocessed_reviews.json` — list of cleaned reviews with metadata
-- `review_batches/batch_001.json … batch_N.json`
+- `preprocessed_reviews.json`  list of cleaned reviews with metadata
+- `review_batches/batch_001.json  batch_N.json`
 
 ---
 
-### PHASE 3 — LLM Theme Generation (Groq Free Tier)
+### PHASE 3  LLM Theme Generation (Groq Free Tier)
 
-**Goal:** Discover 3–5 meaningful themes from the full review corpus.
+**Goal:** Discover 35 meaningful themes from the full review corpus.
 
 #### Groq Free Tier Limits
 - **Model:** `llama3-70b-8192`
@@ -231,10 +231,10 @@ result, continuation_token = reviews(
 
 Since `llama3-70b-8192` has an 8K context window, we can't send all 500 reviews in one call. Instead:
 
-1. **Batch extraction** — Send batches of 50 reviews each to Groq. Each batch returns candidate themes.
-2. **Theme aggregation** — Collect all candidate themes from all batches, then make one final Groq call to merge/deduplicate into 3–5 consolidated themes.
+1. **Batch extraction**  Send batches of 50 reviews each to Groq. Each batch returns candidate themes.
+2. **Theme aggregation**  Collect all candidate themes from all batches, then make one final Groq call to merge/deduplicate into 35 consolidated themes.
 
-This ensures **every single review contributes** to theme identification — no sampling, no reviews left out.
+This ensures **every single review contributes** to theme identification  no sampling, no reviews left out.
 
 **Step 1: Per-Batch Theme Extraction**
 
@@ -312,7 +312,7 @@ Candidate themes from all batches:
 
 ---
 
-### PHASE 4 — Review → Theme Classification (Groq Free Tier)
+### PHASE 4  Review  Theme Classification (Groq Free Tier)
 
 **Goal:** Assign each review to its best-matching theme.
 
@@ -352,14 +352,14 @@ Reviews:
 
 ---
 
-### PHASE 5 — Weekly Pulse Generation (Gemini Free Tier)
+### PHASE 5  Weekly Pulse Generation (Gemini Free Tier)
 
-**Goal:** Produce a scannable ≤250-word weekly note using Google Gemini.
+**Goal:** Produce a scannable 250-word weekly note using Google Gemini.
 
 > **Why Gemini for this phase?** Gemini excels at structured, creative writing tasks like generating executive summaries and actionable insights. Using a separate LLM also distributes load across two free-tier APIs, avoiding rate limit pressure on Groq.
 
 #### Gemini Free Tier Limits
-- **Models:** `gemini-2.5-flash` · `gemini-2.5-flash-lite` · `gemini-3.1-flash-lite`
+- **Models:** `gemini-2.5-flash`  `gemini-2.5-flash-lite`  `gemini-3.1-flash-lite`
 - **Rate limit:** 15 RPM, 1,500 RPD, 1M tokens/min
 - **Temperature:** 0.3 (balanced creativity + consistency)
 - **Cost:** $0.00
@@ -385,11 +385,11 @@ User Quotes (do NOT modify):
 
 Write:
 1. A 2-sentence executive summary
-2. Brief bullet for each of the 3 themes (1–2 sentences each)
+2. Brief bullet for each of the 3 themes (12 sentences each)
 3. 3 actionable improvement ideas for the product team
 
 Rules:
-- Total output ≤ 250 words
+- Total output  250 words
 - No PII (no names, emails, IDs)
 - Use clear, simple language
 - Format in Markdown
@@ -398,7 +398,7 @@ Rules:
 #### Output: `weekly_pulse.md`
 
 ```markdown
-## 📊 Groww Weekly App Review Pulse
+##  Groww Weekly App Review Pulse
 **Week of 10 Mar 2026 | 416 reviews analysed**
 
 ### Executive Summary
@@ -406,16 +406,16 @@ Users appreciate Groww's SIP simplicity but continue to face friction during KYC
 Support responsiveness remains a concern for 1-star reviews.
 
 ### Top Themes
-- 🔴 **KYC & Onboarding Friction (34%)** — Verification delays frustrate new users.
-- 🟢 **SIP Management UX (23%)** — Easy SIP setup drives strong positive sentiment.
-- 🟡 **Customer Support Response (19%)** — Slow ticket resolution cited repeatedly.
+-  **KYC & Onboarding Friction (34%)**  Verification delays frustrate new users.
+-  **SIP Management UX (23%)**  Easy SIP setup drives strong positive sentiment.
+-  **Customer Support Response (19%)**  Slow ticket resolution cited repeatedly.
 
 ### User Voices
-> "The KYC got stuck for 3 days with no update — almost gave up on the app."
+> "The KYC got stuck for 3 days with no update  almost gave up on the app."
 > "Setting up SIP took less than 2 minutes. Brilliant!"
 > "Raised a support ticket 2 weeks ago. Still pending."
 
-### 💡 Action Ideas
+###  Action Ideas
 1. Add real-time KYC status tracker with estimated completion time.
 2. Surface SIP success stories in onboarding to reinforce positive UX.
 3. Implement auto-escalation for support tickets older than 72 hours.
@@ -423,7 +423,7 @@ Support responsiveness remains a concern for 1-star reviews.
 
 ---
 
-### PHASE 6 — Email Draft Assembly & Delivery
+### PHASE 6  Email Draft Assembly & Delivery
 
 **Goal:** Send the weekly pulse to a user-provided email address via Gmail SMTP (free).
 
@@ -438,23 +438,23 @@ Support responsiveness remains a concern for 1-star reviews.
 #### Email HTML Template Structure
 
 ```
-Subject: 📊 Groww Weekly App Review Pulse — Week of {date}
+Subject:  Groww Weekly App Review Pulse  Week of {date}
 From:    your-gmail@gmail.com
 To:      {user_provided_email}
 
-─────────────────────────────────────
+
   [Header Banner]
   Weekly App Review Pulse
   Week of 10 Mar 2026
-─────────────────────────────────────
+
   Executive Summary paragraph
-─────────────────────────────────────
+
   Top 3 Themes (styled cards)
-─────────────────────────────────────
+
   User Voices (blockquotes)
-─────────────────────────────────────
+
   Action Ideas (numbered list)
-─────────────────────────────────────
+
   Footer: powered by Groq + Gemini
 ```
 
@@ -468,11 +468,11 @@ SMTP_PASSWORD=your-gmail-app-password
 SENDER_NAME=Groww Insights Bot
 ```
 
-> **Gmail App Password Setup:** Settings → Security → 2-Step Verification → App Passwords → Generate. Completely free.
+> **Gmail App Password Setup:** Settings  Security  2-Step Verification  App Passwords  Generate. Completely free.
 
 ---
 
-### PHASE 7 — React UI (Vite)
+### PHASE 7  React UI (Vite)
 
 **Goal:** A single-page web app to trigger the pipeline and display results.
 
@@ -481,7 +481,7 @@ SENDER_NAME=Groww Insights Bot
 | View | Description |
 |------|-------------|
 | **Home** | "Fetch Live Reviews" button; date range selector (8/10/12 weeks) |
-| **Processing** | Animated progress stepper (Fetching → Theming → Generating → Ready) |
+| **Processing** | Animated progress stepper (Fetching  Theming  Generating  Ready) |
 | **Pulse View** | Rendered weekly pulse with theme cards, quote carousel, action ideas |
 | **Email Panel** | Email input field + "Send Draft Email" button + confirmation toast |
 | **Download** | Download pulse as `.md` or generate PDF (browser print) |
@@ -490,23 +490,23 @@ SENDER_NAME=Groww Insights Bot
 
 ```
 <App>
- ├── <Navbar>                    — App name, Groww branding
- ├── <ReviewSourcePanel>         — "Fetch Live" button + date range selector
- ├── <ProgressStepper>           — 5-step pipeline progress indicator
- ├── <PulseCard>                 — Executive summary
- ├── <ThemeGrid>                 — 3 theme cards with sentiment badge
- ├── <QuoteCarousel>             — 3 user quotes, cycling animation
- ├── <ActionIdeas>               — 3 numbered action ideas
- ├── <EmailPanel>                — Email input + send button
- └── <DownloadBar>               — MD + PDF download buttons
+  <Navbar>                     App name, Groww branding
+  <ReviewSourcePanel>          "Fetch Live" button + date range selector
+  <ProgressStepper>            5-step pipeline progress indicator
+  <PulseCard>                  Executive summary
+  <ThemeGrid>                  3 theme cards with sentiment badge
+  <QuoteCarousel>              3 user quotes, cycling animation
+  <ActionIdeas>                3 numbered action ideas
+  <EmailPanel>                 Email input + send button
+  <DownloadBar>                MD + PDF download buttons
 ```
 
-#### API Calls (Frontend → Backend)
+#### API Calls (Frontend  Backend)
 
 | Endpoint | Method | Purpose |
 |----------|--------|---------|
 | `/api/fetch-reviews` | POST | Fetch live reviews via Play Store scraper |
-| `/api/run-pipeline` | POST | Trigger full pipeline (theme gen → pulse) |
+| `/api/run-pipeline` | POST | Trigger full pipeline (theme gen  pulse) |
 | `/api/status/{job_id}` | GET | Poll pipeline progress |
 | `/api/pulse/{job_id}` | GET | Fetch generated pulse JSON |
 | `/api/send-email` | POST | Send email draft with pulse |
@@ -514,35 +514,35 @@ SENDER_NAME=Groww Insights Bot
 
 ---
 
-## 🗄️ Data Storage
+##  Data Storage
 
 ```
 project-root/
-├── data/
-│   ├── raw/                    ← Fetched reviews from Play Store
-│   ├── processed/
-│   │   ├── clean_reviews.json
-│   │   ├── preprocessed_reviews.json
-│   │   ├── themes.json
-│   │   ├── classified_reviews.json
-│   │   └── weekly_pulse.md
-│   └── exports/
-│       └── weekly_pulse_YYYY-MM-DD.md
-├── logs/
-│   └── pipeline_{job_id}.log
-└── temp/                       ← Auto-cleaned after 24h
+ data/
+    raw/                     Fetched reviews from Play Store
+    processed/
+       clean_reviews.json
+       preprocessed_reviews.json
+       themes.json
+       classified_reviews.json
+       weekly_pulse.md
+    exports/
+        weekly_pulse_YYYY-MM-DD.md
+ logs/
+    pipeline_{job_id}.log
+ temp/                        Auto-cleaned after 24h
 ```
 
 > **Note:** No database needed for MVP. All state is file-based per job. Jobs are identified by `job_id = UUID4`.
 
 ---
 
-## 🔑 Security & Privacy
+##  Security & Privacy
 
 | Concern | Mitigation |
 |---------|-----------|
 | PII in reviews | `pii_scrubber.py` strips emails, phone numbers, usernames before any LLM call |
-| Reviewer usernames | Dropped at ingestion — never stored |
+| Reviewer usernames | Dropped at ingestion  never stored |
 | Email address | Used only for single send; never stored to disk |
 | Groq API key | Stored in `.env`; never exposed to frontend |
 | Gemini API key | Stored in `.env`; never exposed to frontend |
@@ -551,75 +551,75 @@ project-root/
 
 ---
 
-## 📁 Project Directory Structure
+##  Project Directory Structure
 
 ```
 App Review Insights Analyser/
-├── backend/
-│   ├── main.py                     ← FastAPI app entry point
-│   ├── config.py                   ← Env var loading (.env)
-│   ├── routers/
-│   │   ├── reviews.py              ← /api/fetch-reviews
-│   │   ├── pipeline.py             ← /api/run-pipeline, /api/status
-│   │   ├── pulse.py                ← /api/pulse, /api/download
-│   │   └── email.py                ← /api/send-email
-│   ├── services/
-│   │   ├── review_fetcher.py       ← google-play-scraper
-│   │   ├── pii_scrubber.py
-│   │   ├── date_filter.py
-│   │   ├── emoji_filter.py          ← Removes emoji-containing reviews
-│   │   ├── deduplicator.py
-│   │   ├── text_normaliser.py
-│   │   ├── batch_chunker.py
-│   │   ├── theme_generator.py      ← Groq: Phase 3
-│   │   ├── theme_classifier.py     ← Groq: Phase 4
-│   │   ├── pulse_generator.py      ← Gemini: Phase 5
-│   │   ├── quote_selector.py
-│   │   ├── pulse_formatter.py
-│   │   ├── email_builder.py
-│   │   └── email_sender.py
-│   ├── models/
-│   │   ├── review.py               ← Pydantic models
-│   │   ├── theme.py
-│   │   └── pulse.py
-│   ├── utils/
-│   │   ├── logger.py
-│   │   └── job_store.py            ← In-memory job state
-│   ├── data/                       ← Runtime data (gitignored)
-│   └── requirements.txt
-├── frontend/
-│   ├── index.html
-│   ├── vite.config.js
-│   ├── src/
-│   │   ├── main.jsx
-│   │   ├── App.jsx
-│   │   ├── index.css               ← Design system tokens
-│   │   ├── components/
-│   │   │   ├── Navbar.jsx
-│   │   │   ├── ReviewSourcePanel.jsx  ← Fetch Live + Date range
-│   │   │   ├── ProgressStepper.jsx
-│   │   │   ├── PulseCard.jsx
-│   │   │   ├── ThemeGrid.jsx
-│   │   │   ├── QuoteCarousel.jsx
-│   │   │   ├── ActionIdeas.jsx
-│   │   │   ├── EmailPanel.jsx
-│   │   │   └── DownloadBar.jsx
-│   │   └── api/
-│   │       └── client.js           ← Axios API wrappers
-│   └── package.json
-├── data/
-│   └── sample_reviews.json         ← Sample output for reference (committed)
-├── docs/
-│   ├── weekly_pulse_sample.md      ← Latest generated pulse
-│   └── email_draft_screenshot.png  ← Email draft screenshot
-├── .env.example                    ← Template for credentials
-├── ARCHITECTURE.md                 ← This file
-└── README.md
+ backend/
+    main.py                      FastAPI app entry point
+    config.py                    Env var loading (.env)
+    routers/
+       reviews.py               /api/fetch-reviews
+       pipeline.py              /api/run-pipeline, /api/status
+       pulse.py                 /api/pulse, /api/download
+       email.py                 /api/send-email
+    services/
+       review_fetcher.py        google-play-scraper
+       pii_scrubber.py
+       date_filter.py
+       emoji_filter.py           Removes emoji-containing reviews
+       deduplicator.py
+       text_normaliser.py
+       batch_chunker.py
+       theme_generator.py       Groq: Phase 3
+       theme_classifier.py      Groq: Phase 4
+       pulse_generator.py       Gemini: Phase 5
+       quote_selector.py
+       pulse_formatter.py
+       email_builder.py
+       email_sender.py
+    models/
+       review.py                Pydantic models
+       theme.py
+       pulse.py
+    utils/
+       logger.py
+       job_store.py             In-memory job state
+    data/                        Runtime data (gitignored)
+    requirements.txt
+ frontend/
+    index.html
+    vite.config.js
+    src/
+       main.jsx
+       App.jsx
+       index.css                Design system tokens
+       components/
+          Navbar.jsx
+          ReviewSourcePanel.jsx   Fetch Live + Date range
+          ProgressStepper.jsx
+          PulseCard.jsx
+          ThemeGrid.jsx
+          QuoteCarousel.jsx
+          ActionIdeas.jsx
+          EmailPanel.jsx
+          DownloadBar.jsx
+       api/
+           client.js            Axios API wrappers
+    package.json
+ data/
+    sample_reviews.json          Sample output for reference (committed)
+ docs/
+    weekly_pulse_sample.md       Latest generated pulse
+    email_draft_screenshot.png   Email draft screenshot
+ .env.example                     Template for credentials
+ ARCHITECTURE.md                  This file
+ README.md
 ```
 
 ---
 
-## ⚙️ Pipeline Orchestration (FastAPI BackgroundTasks)
+##  Pipeline Orchestration (FastAPI BackgroundTasks)
 
 ```python
 # Simplified orchestration flow in pipeline.py
@@ -631,7 +631,7 @@ async def run_pipeline(request: PipelineRequest, background_tasks: BackgroundTas
     return {"job_id": job_id, "status": "started"}
 
 async def execute_pipeline(job_id: str, request: PipelineRequest):
-    # Phase 1 — Fetch from Play Store
+    # Phase 1  Fetch from Play Store
     update_status(job_id, "fetching")
     reviews = review_fetcher.fetch(app_id="com.nextbillion.groww", count=500)
 
@@ -640,20 +640,20 @@ async def execute_pipeline(job_id: str, request: PipelineRequest):
     reviews = emoji_filter.remove(reviews)
     reviews = deduplicator.run(reviews)
 
-    # Phase 2 — Preprocess
+    # Phase 2  Preprocess
     update_status(job_id, "preprocessing")
     reviews = text_normaliser.normalise(reviews)
     batches = batch_chunker.chunk(reviews, batch_size=50)
 
-    # Phase 3 — Theme Generation (Groq)
+    # Phase 3  Theme Generation (Groq)
     update_status(job_id, "generating_themes")
     themes = theme_generator.generate(reviews)
 
-    # Phase 4 — Classification (Groq)
+    # Phase 4  Classification (Groq)
     update_status(job_id, "classifying")
     classified = theme_classifier.classify(batches, themes)
 
-    # Phase 5 — Pulse Generation (Gemini)
+    # Phase 5  Pulse Generation (Gemini)
     update_status(job_id, "generating_pulse")
     pulse = pulse_generator.generate(classified, themes)     # Gemini call
     pulse_formatter.save(pulse, job_id)
@@ -663,14 +663,14 @@ async def execute_pipeline(job_id: str, request: PipelineRequest):
 
 ---
 
-## 🔁 Re-running for a New Week
+##  Re-running for a New Week
 
 ```
 1. Open the UI at http://localhost:5173
-2. Click "Fetch Live Reviews" → Reviews from the last 8–12 weeks are fetched automatically
-3. Click "Generate Pulse" → The pipeline runs (takes ~30–60 seconds)
+2. Click "Fetch Live Reviews"  Reviews from the last 812 weeks are fetched automatically
+3. Click "Generate Pulse"  The pipeline runs (takes ~3060 seconds)
 4. Review the generated weekly pulse on screen
-5. Enter your email → Click "Send Draft Email"
+5. Enter your email  Click "Send Draft Email"
 6. (Optional) Download pulse as Markdown / PDF
 ```
 
@@ -678,7 +678,7 @@ No CLI needed. No manual data export required. Everything is automated via the U
 
 ---
 
-## 🧪 Testing Strategy
+##  Testing Strategy
 
 | Test Type | Tool | What Is Tested |
 |-----------|------|---------------|
@@ -686,12 +686,12 @@ No CLI needed. No manual data export required. Everything is automated via the U
 | LLM integration | `pytest` + mock Groq | Theme generation prompt/response parsing |
 | API tests | `httpx` + FastAPI TestClient | All REST endpoints |
 | Scraper test | `pytest` | `review_fetcher.py` returns valid reviews from Play Store |
-| UI smoke test | Manual / Playwright | Fetch → Pulse → Email full flow |
+| UI smoke test | Manual / Playwright | Fetch  Pulse  Email full flow |
 | Email test | Mailtrap sandbox (free) | Email HTML rendering, delivery |
 
 ---
 
-## 📊 Theme Legend
+##  Theme Legend
 
 | Theme ID | Typical Theme Name | Sentiment | Trigger Keywords |
 |----------|--------------------|-----------|----------------|
@@ -701,20 +701,20 @@ No CLI needed. No manual data export required. Everything is automated via the U
 | T4 | Customer Support | Negative | support, ticket, response, refund, waiting |
 | T5 | Features & Wishlist | Mixed | wishlist, add, feature, option, notification |
 
-> Themes are **LLM-generated per run** — the above is illustrative. Actual themes depend on the review corpus.
+> Themes are **LLM-generated per run**  the above is illustrative. Actual themes depend on the review corpus.
 
 ---
 
-## 🔐 Environment Variables (`.env.example`)
+##  Environment Variables (`.env.example`)
 
 ```bash
-# Groq (Free Tier — get key at https://console.groq.com)
+# Groq (Free Tier  get key at https://console.groq.com)
 GROQ_API_KEY=gsk_xxxxxxxxxxxxxxxxxxxx
 
-# Gemini (Free Tier — get key at https://aistudio.google.com/apikey)
+# Gemini (Free Tier  get key at https://aistudio.google.com/apikey)
 GEMINI_API_KEY=AIzaSyXXXXXXXXXXXXXXXXXXXXXXXXX
 
-# Gmail SMTP (Free — generate App Password in Google Account settings)
+# Gmail SMTP (Free  generate App Password in Google Account settings)
 SMTP_HOST=smtp.gmail.com
 SMTP_PORT=587
 SMTP_USER=your-gmail@gmail.com
@@ -729,7 +729,7 @@ DEFAULT_WEEKS=12
 
 ---
 
-## 🚀 Deployment Considerations (Post-MVP)
+##  Deployment Considerations (Post-MVP)
 
 | Concern | Recommendation |
 |---------|---------------|
@@ -742,22 +742,22 @@ DEFAULT_WEEKS=12
 
 ---
 
-## 📅 Phase Execution Timeline
+##  Phase Execution Timeline
 
 ```
-Phase 1: Setup + Data Ingestion   — Project init, review fetcher, PII scrubber, data cleaning
-Phase 2: Preprocessing            — Text normalisation, batching, metadata tagging
-Phase 3: LLM Theme Generation     — Groq integration, theme generation prompts
-Phase 4: Theme Classification     — Batch classification, frequency computation
-Phase 5: Pulse Generation         — Quote selection, pulse writing, Markdown formatting
-Phase 6: Email Delivery           — Gmail SMTP integration, HTML email template
-Phase 7: React UI                 — Full frontend with all components, API integration
-Final:   Testing & Polish         — End-to-end tests, README, sample data, demo recording
+Phase 1: Setup + Data Ingestion    Project init, review fetcher, PII scrubber, data cleaning
+Phase 2: Preprocessing             Text normalisation, batching, metadata tagging
+Phase 3: LLM Theme Generation      Groq integration, theme generation prompts
+Phase 4: Theme Classification      Batch classification, frequency computation
+Phase 5: Pulse Generation          Quote selection, pulse writing, Markdown formatting
+Phase 6: Email Delivery            Gmail SMTP integration, HTML email template
+Phase 7: React UI                  Full frontend with all components, API integration
+Final:   Testing & Polish          End-to-end tests, README, sample data, demo recording
 ```
 
 ---
 
-## 📋 Key Python Dependencies (`requirements.txt`)
+##  Key Python Dependencies (`requirements.txt`)
 
 ```
 fastapi==0.115.0
@@ -776,78 +776,78 @@ All dependencies are **free and open source**.
 
 ---
 
-## 📬 GitHub-Based Daily Email Draft Caching
+##  GitHub-Based Daily Email Draft Caching
 
-**Goal:** Ensure the expensive LLM-powered review analysis runs **at most once per day**. All subsequent email requests on the same date reuse a cached draft stored in a GitHub repository — no cron jobs, no database, and a free historical archive of daily insights.
+**Goal:** Ensure the expensive LLM-powered review analysis runs **at most once per day**. All subsequent email requests on the same date reuse a cached draft stored in a GitHub repository  no cron jobs, no database, and a free historical archive of daily insights.
 
 ### How It Works
 
 ```
-User enters email → clicks "Send Daily Summary"
-        │
-        ▼
-  ┌─────────────────────────────────────────────────────────┐
-  │  Check GitHub repo for /daily-emails/groww_YYYY-MM-DD.txt │
-  └──────────────────────────┬──────────────────────────────┘
-                             │
-              ┌──────────────┼──────────────────┐
-              ▼              ▼                   ▼
+User enters email  clicks "Send Daily Summary"
+        
+        
+  
+    Check GitHub repo for /daily-emails/groww_YYYY-MM-DD.txt 
+  
+                             
+              
+                                               
         [File EXISTS]   [Lock EXISTS]      [Neither EXISTS]
-              │              │                   │
-              │              │         ┌─────────▼──────────┐
-              │              │         │ Create lock file    │
-              │              │         │ groww_YYYY-MM-DD    │
-              │              │         │ .lock               │
-              │              │         └─────────┬──────────┘
-              │              │                   │
-              │              │         ┌─────────▼──────────┐
-              │              │         │ Run full pipeline:  │
-              │              │         │ 1. Fetch reviews    │
-              │              │         │ 2. LLM themes       │
-              │              │         │ 3. Quotes + actions │
-              │              │         │ 4. Format draft     │
-              │              │         └─────────┬──────────┘
-              │              │                   │
-              │              │         ┌─────────▼──────────┐
-              │              │         │ Save draft (.txt)   │
-              │              │         │ to GitHub repo      │
-              │              │         │ Delete lock file    │
-              │              │         └─────────┬──────────┘
-              │              │                   │
-              │      ┌───────▼────────┐          │
-              │      │ Poll / wait    │          │
-              │      │ until .txt     │          │
-              │      │ appears        │          │
-              │      └───────┬────────┘          │
-              │              │                   │
-              ▼              ▼                   ▼
-        ┌─────────────────────────────────────────────┐
-        │  Download draft via GitHub API               │
-        │  Send contents as email body to user          │
-        └─────────────────────────────────────────────┘
+                                               
+                                     
+                                      Create lock file    
+                                      groww_YYYY-MM-DD    
+                                      .lock               
+                                     
+                                               
+                                     
+                                      Run full pipeline:  
+                                      1. Fetch reviews    
+                                      2. LLM themes       
+                                      3. Quotes + actions 
+                                      4. Format draft     
+                                     
+                                               
+                                     
+                                      Save draft (.txt)   
+                                      to GitHub repo      
+                                      Delete lock file    
+                                     
+                                               
+                              
+                     Poll / wait              
+                     until .txt               
+                     appears                  
+                              
+                                               
+                                               
+        
+          Download draft via GitHub API               
+          Send contents as email body to user          
+        
 ```
 
 ### GitHub Repository Structure
 
 ```
 github-repo/
-└── daily-emails/
-    ├── groww_2026-03-10.txt      ← Monday's draft
-    ├── groww_2026-03-11.txt      ← Tuesday's draft
-    ├── groww_2026-03-12.txt      ← Wednesday's draft
-    ├── groww_2026-03-13.lock     ← Generation in progress (temporary)
-    └── ...                       ← Automatic historical archive
+ daily-emails/
+     groww_2026-03-10.txt       Monday's draft
+     groww_2026-03-11.txt       Tuesday's draft
+     groww_2026-03-12.txt       Wednesday's draft
+     groww_2026-03-13.lock      Generation in progress (temporary)
+     ...                        Automatic historical archive
 ```
 
 - **Draft filename:** `groww_YYYY-MM-DD.txt` (e.g. `groww_2026-03-15.txt`)
-- **Lock filename:** `groww_YYYY-MM-DD.lock` (temporary — deleted after generation)
+- **Lock filename:** `groww_YYYY-MM-DD.lock` (temporary  deleted after generation)
 
 ### Components
 
 | Component | Description |
 |-----------|-------------|
 | `github_cache.py` | Check / read / write / delete files in the GitHub repo via the GitHub Contents API |
-| `daily_draft_service.py` | Orchestrates the check → generate → cache → send flow |
+| `daily_draft_service.py` | Orchestrates the check  generate  cache  send flow |
 | `draft_formatter.py` | Converts the LLM pulse output into a clean plain-text email body |
 
 ### Server-Side Logic (Pseudocode)
@@ -858,23 +858,23 @@ async def handle_daily_summary(email: str):
     draft_path  = f"daily-emails/groww_{today}.txt"
     lock_path   = f"daily-emails/groww_{today}.lock"
 
-    # 1️⃣ Draft already exists → reuse it
+    # 1 Draft already exists  reuse it
     draft = github_cache.get_file(draft_path)
     if draft:
         send_email(to=email, body=draft)
         return
 
-    # 2️⃣ Lock exists → another request is generating the draft
+    # 2 Lock exists  another request is generating the draft
     if github_cache.file_exists(lock_path):
         draft = await poll_until_ready(draft_path, timeout=120)
         send_email(to=email, body=draft)
         return
 
-    # 3️⃣ Neither exists → we are the first request today
+    # 3 Neither exists  we are the first request today
     github_cache.create_file(lock_path, content="generating...")
 
     try:
-        # Run the full pipeline (Phases 1–5)
+        # Run the full pipeline (Phases 15)
         reviews = fetch_reviews(app_id="com.nextbillion.groww")
         themes  = groq_theme_generation(reviews)
         classified = groq_classify(reviews, themes)
@@ -898,7 +898,7 @@ All file operations use the **GitHub Contents API** (`repos/{owner}/{repo}/conte
 | Operation | API Call | Auth |
 |-----------|----------|------|
 | Check if file exists | `GET /repos/:owner/:repo/contents/:path` | Personal Access Token |
-| Read file contents | Same GET → decode `content` (base64) | Personal Access Token |
+| Read file contents | Same GET  decode `content` (base64) | Personal Access Token |
 | Create / update file | `PUT /repos/:owner/:repo/contents/:path` | Personal Access Token |
 | Delete file (lock) | `DELETE /repos/:owner/:repo/contents/:path` | Personal Access Token |
 
@@ -908,8 +908,8 @@ All file operations use the **GitHub Contents API** (`repos/{owner}/{repo}/conte
 
 | Scenario | Behaviour |
 |----------|-----------|
-| First request of the day | Creates lock → runs pipeline → saves draft → deletes lock |
-| Subsequent requests (draft exists) | Immediately downloads cached draft — no LLM calls |
+| First request of the day | Creates lock  runs pipeline  saves draft  deletes lock |
+| Subsequent requests (draft exists) | Immediately downloads cached draft  no LLM calls |
 | Concurrent request (lock exists) | Polls every 5 seconds for up to 2 minutes until draft appears |
 | Pipeline failure | Lock is deleted in `finally` block; next request retries from scratch |
 | Stale lock (server crash) | Lock files older than 10 minutes are treated as expired and ignored |
@@ -917,7 +917,7 @@ All file operations use the **GitHub Contents API** (`repos/{owner}/{repo}/conte
 ### Environment Variables (additions to `.env`)
 
 ```bash
-# GitHub Cache (Free — create a Personal Access Token at https://github.com/settings/tokens)
+# GitHub Cache (Free  create a Personal Access Token at https://github.com/settings/tokens)
 GITHUB_TOKEN=ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 GITHUB_REPO_OWNER=your-github-username
 GITHUB_REPO_NAME=groww-daily-insights
@@ -928,7 +928,7 @@ GITHUB_BRANCH=main
 
 | Endpoint | Method | Purpose |
 |----------|--------|---------|
-| `/api/daily-summary` | POST | `{ "email": "user@example.com" }` → Check cache → generate if needed → send email |
+| `/api/daily-summary` | POST | `{ "email": "user@example.com" }`  Check cache  generate if needed  send email |
 
 ### Why This Design?
 
