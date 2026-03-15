@@ -4,6 +4,7 @@ Serves the Vanilla HTML/JS frontend and exposes the backend synthesis pipelines.
 """
 
 import os
+import sys
 from pathlib import Path
 from datetime import datetime
 
@@ -12,7 +13,21 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, EmailStr
 
+# Inject backend root to sys.path so 'phaseX' modules resolve
+_BACKEND_ROOT = Path(__file__).resolve().parent
+if str(_BACKEND_ROOT) not in sys.path:
+    sys.path.insert(0, str(_BACKEND_ROOT))
+
 # Import existing pipelines
+from phase1.pipeline import run_pipeline as run_phase1_pipeline
+from phase1.pipeline import save_results as save_phase1_results
+
+from phase2.pipeline import run_pipeline as run_phase2_pipeline
+from phase2.pipeline import save_results as save_phase2_results
+
+from phase3.pipeline import run_pipeline as run_phase3_pipeline
+from phase4.pipeline import run_pipeline as run_phase4_pipeline
+
 from phase5.pipeline import run_pipeline as run_phase5_pipeline
 from phase6.pipeline import run_pipeline as run_phase6_pipeline
 from utils.logger import get_logger
@@ -52,8 +67,27 @@ async def api_generate_pulse():
     Returns the generated Weekly Pulse markdown.
     """
     try:
-        logger.info("Triggering Phase 1-5 pipeline via API...")
-        # run_phase5_pipeline() actually executes Phase 1-4 internally as designed
+        logger.info("Triggering full Phase 1-5 pipeline via API...")
+        
+        # Sequentially run the entire pipeline
+        # Phase 1: Fetch and Clean
+        logger.info("Starting Phase 1 (Fetch/Clean)...")
+        run_phase1_pipeline()
+        
+        # Phase 2: Batch and Normalize
+        logger.info("Starting Phase 2 (Batch/Normalize)...")
+        run_phase2_pipeline()
+        
+        # Phase 3: Theme Generation
+        logger.info("Starting Phase 3 (Theme Generation)...")
+        run_phase3_pipeline()
+        
+        # Phase 4: Theme Classification
+        logger.info("Starting Phase 4 (Classification)...")
+        run_phase4_pipeline()
+        
+        # Phase 5: Pulse Synthesis
+        logger.info("Starting Phase 5 (Pulse Synthesis)...")
         pulse_markdown, _ = run_phase5_pipeline()
         
         # We need total_reviews for the UI metadata. Since pipeline only returns the MD string,
