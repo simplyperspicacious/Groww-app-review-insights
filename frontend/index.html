@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Groww App Review Pulse</title>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-content">
+            <h1 class="logo">Groww <span>Pulse Analyser</span></h1>
+        </div>
+    </nav>
+
+    <main class="container">
+        <!-- Section 1: Review Source & Action -->
+        <section class="card panel panel-generate" id="generate-panel">
+            <div class="panel-header">
+                <h2>Generate Weekly Pulse</h2>
+                <p>Fetch the latest app reviews, extract core themes using Groq Llama 3, and synthesize a pulse via Google Gemini.</p>
+            </div>
+            
+            <button id="btn-generate" class="btn btn-primary btn-large">
+                <span class="btn-text">Run Pipeline & Generate Pulse</span>
+                <span class="btn-loader hidden"></span>
+            </button>
+            <div id="generation-status" class="status-text hidden">Fetching and analyzing reviews (this may take up to 2 minutes)...</div>
+            <div id="generation-error" class="error-text hidden"></div>
+        </section>
+
+        <!-- Section 2: Pulse Dashboard (Hidden until generated) -->
+        <section class="dashboard hidden" id="pulse-dashboard">
+            <div class="card pulse-header">
+                <h2>📊 Weekly App Review Pulse</h2>
+                <p id="pulse-metadata" class="meta-label">Week of -- | -- reviews analysed</p>
+            </div>
+
+            <!-- Injected Markdown Content -->
+            <div class="card pulse-content" id="pulse-content">
+                <!-- Executive Summary & Themes go here -->
+            </div>
+
+            <!-- Section 3: Email Delivery Panel -->
+            <div class="card panel panel-email">
+                <h3>Send Pulse Report</h3>
+                <p>Deliver the generated insights report directly to your inbox or a team member.</p>
+                <form id="email-form" class="email-form">
+                    <div class="input-group">
+                        <label for="recipient-email">Recipient Email Address</label>
+                        <input type="email" id="recipient-email" placeholder="manager@groww.in" required>
+                    </div>
+                    <button type="submit" id="btn-send-email" class="btn btn-secondary">
+                        <span class="btn-text">Dispatch Email</span>
+                        <span class="btn-loader hidden"></span>
+                    </button>
+                </form>
+                <div id="email-status" class="status-container hidden"></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Bring in marked.js to render Markdown -> HTML dynamically -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

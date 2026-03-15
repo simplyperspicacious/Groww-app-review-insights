@@ -1,0 +1,9 @@
+[project]
+name = "app-review-insights-backend"
+version = "0.1.0"
+description = "Backend for App Review Insights Analyser (Groww)"
+readme = "README.md"
+requires-python = ">=3.8,<3.13"
+
+[tool.setuptools]
+packages = []

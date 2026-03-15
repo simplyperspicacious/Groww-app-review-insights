@@ -1,0 +1,233 @@
+/* 
+   Groww Premium Design System CSS 
+   Tokens: #00d09c (Brand Green), #f4f7f6 (Background), Inter (Font) 
+*/
+
+:root {
+    --color-primary: #00d09c;
+    --color-primary-hover: #00b386;
+    --color-bg: #f4f7f6;
+    --color-surface: #ffffff;
+    --color-text: #2c3e50;
+    --color-text-light: #5a6b7c;
+    --color-border: #e2e8f0;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 24px rgba(0, 0, 0, 0.04);
+    --radius: 12px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', -apple-system, sans-serif;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Typography */
+h1, h2, h3 {
+    font-weight: 600;
+    color: #1a1a1a;
+    letter-spacing: -0.5px;
+}
+
+/* Navbar */
+.navbar {
+    background-color: var(--color-surface);
+    border-bottom: 1px solid var(--color-border);
+    padding: 16px 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.nav-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+.logo {
+    font-size: 1.25rem;
+    color: #1a1a1a;
+}
+.logo span {
+    color: var(--color-text-light);
+    font-weight: 400;
+}
+
+/* Layout */
+.container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 0 24px;
+}
+
+.card {
+    background-color: var(--color-surface);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-md);
+    padding: 32px;
+    margin-bottom: 24px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Buttons */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    font-family: 'Inter', sans-serif;
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn-primary {
+    background-color: var(--color-primary);
+    color: white;
+}
+.btn-primary:hover:not(:disabled) {
+    background-color: var(--color-primary-hover);
+    transform: translateY(-1px);
+}
+
+.btn-secondary {
+    background-color: #f1f5f9;
+    color: var(--color-text);
+}
+.btn-secondary:hover:not(:disabled) {
+    background-color: #e2e8f0;
+}
+
+/* Panels */
+.panel-header {
+    margin-bottom: 24px;
+}
+.panel-header p {
+    color: var(--color-text-light);
+    margin-top: 8px;
+}
+
+/* Loader Animation */
+.btn-loader {
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 50%;
+    border-top-color: white;
+    animation: spin 1s linear infinite;
+    margin-left: 10px;
+}
+.btn-secondary .btn-loader {
+    border: 2px solid rgba(0,0,0,0.1);
+    border-top-color: var(--color-text);
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.status-text {
+    margin-top: 16px;
+    font-size: 0.9rem;
+    color: var(--color-primary);
+    font-weight: 500;
+}
+.error-text {
+    margin-top: 16px;
+    font-size: 0.9rem;
+    color: #e53e3e;
+    padding: 12px;
+    background-color: #fed7d7;
+    border-radius: 6px;
+}
+
+/* Pulse Dashboard specific */
+.pulse-header h2 {
+    color: var(--color-primary);
+}
+.meta-label {
+    font-size: 0.85rem;
+    color: var(--color-text-light);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-top: 4px;
+}
+
+/* Markdown Rendering inside the card */
+.pulse-content h3 {
+    margin-top: 32px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--color-border);
+}
+.pulse-content blockquote {
+    border-left: 4px solid var(--color-primary);
+    background-color: #fcfcfc;
+    padding: 16px 20px;
+    margin: 24px 0;
+    border-radius: 0 8px 8px 0;
+    font-style: italic;
+    color: var(--color-text-light);
+}
+.pulse-content ul, .pulse-content ol {
+    margin-left: 24px;
+    margin-bottom: 24px;
+}
+.pulse-content li {
+    margin-bottom: 8px;
+}
+
+/* Email Form */
+.input-group {
+    margin: 24px 0;
+}
+.input-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+.input-group input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 1rem;
+    transition: border-color 0.2s;
+}
+.input-group input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px rgba(0, 208, 156, 0.1);
+}
+
+.status-container {
+    margin-top: 16px;
+    padding: 12px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+.status-success {
+    background-color: #c6f6d5;
+    color: #22543d;
+}
