@@ -72,11 +72,13 @@ async def api_generate_pulse():
         # Sequentially run the entire pipeline
         # Phase 1: Fetch and Clean
         logger.info("Starting Phase 1 (Fetch/Clean)...")
-        run_phase1_pipeline()
+        clean_reviews = run_phase1_pipeline()
+        save_phase1_results(clean_reviews)
         
         # Phase 2: Batch and Normalize
         logger.info("Starting Phase 2 (Batch/Normalize)...")
-        run_phase2_pipeline()
+        batches = run_phase2_pipeline()
+        save_phase2_results(batches)
         
         # Phase 3: Theme Generation
         logger.info("Starting Phase 3 (Theme Generation)...")
