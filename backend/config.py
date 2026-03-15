@@ -36,10 +36,13 @@ class Settings:
 
     # Gmail SMTP (Phase 6)
     SMTP_HOST: str = os.getenv("SMTP_HOST", "smtp.gmail.com")
-    SMTP_PORT: int = int(os.getenv("SMTP_PORT", "587"))
+    SMTP_PORT: int = int(os.getenv("SMTP_PORT", "465"))
     SMTP_USER: str = os.getenv("SMTP_USER", "")
     SMTP_PASSWORD: str = os.getenv("SMTP_PASSWORD", "")
     SENDER_NAME: str = os.getenv("SENDER_NAME", "Groww Insights Bot")
+    
+    # Brevo HTTP API (Optional Phase 6 Dispatcher for Render deployment)
+    BREVO_API_KEY: str = os.getenv("BREVO_API_KEY", "")
 
     # GitHub Cache
     GITHUB_TOKEN: str = os.getenv("GITHUB_TOKEN", "")
